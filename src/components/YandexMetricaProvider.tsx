@@ -28,6 +28,7 @@ export interface YandexMetricaProviderProps {
   };
 }
 
+/** Caveat: make it the top-most wrapper of your layout's `{children}`. Otherwise some issues might occur, e.g. I've tried to have it lower in the tree than 'zustand' store provider and 'swr' config provider, and this caused 'nextjs-toploader' to indefinitely show a loading state. */
 export const YandexMetricaProvider: FC<YandexMetricaProviderProps> = ({
   children,
   tagID,
