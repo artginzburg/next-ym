@@ -1,4 +1,4 @@
-import { AutocompleteUnknownString } from '@artginzburg/experimental';
+import type { AutocompleteUnknownString } from '@artginzburg/experimental/strong-ts/typed-string';
 
 /** Session parameters. @see https://yandex.com/support/metrica/objects/params-method.html */
 export interface VisitParameters {

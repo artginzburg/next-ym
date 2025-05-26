@@ -58,11 +58,22 @@ export function useEcommerce<Defaults extends Pick<DataObject['ecommerce'], 'cur
     [defaults?.currencyCode, pushToDataLayer],
   );
 
+  // TODO Возможные значения:
+  // impressions — просмотр списка товаров;
+  // click — клик по товару в списке;
+  // detail — просмотр товара; // DONE
+  // add — добавление товара в корзину; // DONE
+  // remove — удаление товара из корзины; // DONE
+  // purchase — покупка; // DONE
+  // promoView — просмотр внутренней рекламы;
+  // promoClick — клик по внутренней рекламе.
+
   return {
     trackViewProduct,
     trackAddItemToBasket,
     trackRemoveItemFromBasket,
     trackPurchase,
+
     pushToDataLayer,
   };
 }

@@ -40,6 +40,7 @@
     "format:check": "prettier --check ."
   },
   "devDependencies": {
+    "@artginzburg/experimental": "^0.1.6",
     "@testing-library/jest-dom": "^6.1.5",
     "@testing-library/react": "^14.1.2",
     "@types/google.analytics": "^0.0.46",

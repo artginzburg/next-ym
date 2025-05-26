@@ -29,7 +29,7 @@ export type Product = (
   | { id: string; name: string | undefined }
   | { id: string | undefined; name: string }
   | { id: string; name: string }
-) & {
+) & Partial<{
   /** The brand or trademark associated with the item. For example, "Yandex" */
   brand: UniversalAnalytics.FieldsObject['brand'];
   /**
@@ -40,19 +40,45 @@ export type Product = (
   category: UniversalAnalytics.FieldsObject['category'];
   /** A promo code associated with the item. For example, "PARTNER_SITE_15" */
   coupon: UniversalAnalytics.FieldsObject['coupon'];
-  /** Position of item in the list. For example, 2 */
+  /** Discount amount as a number. */
+  discount: number | undefined;
+  /**
+    List that the item belongs to.
+
+    To evaluate the effectiveness of the list at different stages of user interaction with the product, we recommend specifying the product list in all events that occurred after the list was viewed.
+   */
+  list: string | undefined;
+  /** Position of item in the list (Integer). For example, 2 */
   position: number | undefined;
+  /** Price per unit */
   price: number | undefined;
   quantity: UniversalAnalytics.FieldsObject['quantity'];
   /** A variation of the item. For example, "Red" */
   variant: UniversalAnalytics.FieldsObject['variant'];
-};
+}>;
 
+/** @see https://yandex.ru/support/metrica/ru/ecommerce/data#action_data */
 type ActionField = {
+  /**
+    ID of the order, associated with the whole purchase.
+    @example 'TRX#54321'
+   */
   id: string;
-  coupon: Product['coupon'] | undefined;
-  goal_id: number | undefined;
-  revenue: number | undefined;
+  /** @inheritdoc */
+  coupon?: Product['coupon'];
+  /**
+    The goal number. Specified if this action was the goal.
+    The goal must be set as a JavaScript event type.
+
+    To see the goal number, go to Settings (the Goals tab) in the Yandex Metrica interface.
+   */
+  goal_id?: number | undefined;
+  /**
+    The revenue received.
+
+    If omitted, it is calculated automatically as the sum of the prices of all the items associated with the purchase
+   */
+  revenue?: number | undefined;
 };
 
 type _DataLayer = DataObject[];

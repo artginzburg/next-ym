@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@artginzburg/experimental':
+        specifier: ^0.1.6
+        version: 0.1.6
       '@testing-library/jest-dom':
         specifier: ^6.1.5
         version: 6.1.5(@jest/globals@29.7.0)(@types/jest@29.5.11)(jest@29.7.0(@types/node@20.10.4)(ts-node@10.9.2(@types/node@20.10.4)(typescript@5.3.3)))
@@ -90,6 +93,9 @@ packages:
   '@ampproject/remapping@2.2.1':
     resolution: {integrity: sha512-lFMjJTrFL3j7L9yBxwYfCq2k6qqwHyzuUl/XBnif78PWTJYyL/dfowQHWE3sp6U6ZzqWiiIZnpTMO96zhkjwtg==}
     engines: {node: '>=6.0.0'}
+
+  '@artginzburg/experimental@0.1.6':
+    resolution: {integrity: sha512-S0PWmSXHt9rtgBLpwi1VMWf43ryI1PZJK6LhqK/dvmKwRXKgzeZE6TroATdK3044deIIuBVLNRws8vijMxPwgg==}
 
   '@babel/code-frame@7.23.5':
     resolution: {integrity: sha512-CgH3s1a96LipHCmSUmYFPwY7MNx8C3avkq7i4Wl3cfa662ldtUe4VM1TPXX70pfmrlWTb6jLqTYrZyT2ZTJBgA==}
@@ -2583,6 +2589,8 @@ snapshots:
     dependencies:
       '@jridgewell/gen-mapping': 0.3.3
       '@jridgewell/trace-mapping': 0.3.20
+
+  '@artginzburg/experimental@0.1.6': {}
 
   '@babel/code-frame@7.23.5':
     dependencies:
