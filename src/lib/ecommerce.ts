@@ -29,33 +29,34 @@ export type Product = (
   | { id: string; name: string | undefined }
   | { id: string | undefined; name: string }
   | { id: string; name: string }
-) & Partial<{
-  /** The brand or trademark associated with the item. For example, "Yandex" */
-  brand: UniversalAnalytics.FieldsObject['brand'];
-  /**
-   * The category the item belongs to.
-   *
-   * The hierarchy of categories supports up to 5 nesting levels. Use the / symbol to separate levels. For example, "Clothing/Men's clothing/T-shirts"
-   */
-  category: UniversalAnalytics.FieldsObject['category'];
-  /** A promo code associated with the item. For example, "PARTNER_SITE_15" */
-  coupon: UniversalAnalytics.FieldsObject['coupon'];
-  /** Discount amount as a number. */
-  discount: number | undefined;
-  /**
+) &
+  Partial<{
+    /** The brand or trademark associated with the item. For example, "Yandex" */
+    brand: UniversalAnalytics.FieldsObject['brand'];
+    /**
+     * The category the item belongs to.
+     *
+     * The hierarchy of categories supports up to 5 nesting levels. Use the / symbol to separate levels. For example, "Clothing/Men's clothing/T-shirts"
+     */
+    category: UniversalAnalytics.FieldsObject['category'];
+    /** A promo code associated with the item. For example, "PARTNER_SITE_15" */
+    coupon: UniversalAnalytics.FieldsObject['coupon'];
+    /** Discount amount as a number. */
+    discount: number | undefined;
+    /**
     List that the item belongs to.
 
     To evaluate the effectiveness of the list at different stages of user interaction with the product, we recommend specifying the product list in all events that occurred after the list was viewed.
    */
-  list: string | undefined;
-  /** Position of item in the list (Integer). For example, 2 */
-  position: number | undefined;
-  /** Price per unit */
-  price: number | undefined;
-  quantity: UniversalAnalytics.FieldsObject['quantity'];
-  /** A variation of the item. For example, "Red" */
-  variant: UniversalAnalytics.FieldsObject['variant'];
-}>;
+    list: string | undefined;
+    /** Position of item in the list (Integer). For example, 2 */
+    position: number | undefined;
+    /** Price per unit */
+    price: number | undefined;
+    quantity: UniversalAnalytics.FieldsObject['quantity'];
+    /** A variation of the item. For example, "Red" */
+    variant: UniversalAnalytics.FieldsObject['variant'];
+  }>;
 
 /** @see https://yandex.ru/support/metrica/ru/ecommerce/data#action_data */
 type ActionField = {
