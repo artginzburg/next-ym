@@ -1,11 +1,29 @@
 export type DataObject = {
-  ecommerce: {
-    currencyCode: string;
-  } & (ViewProduct | AddItemToBasket | RemoveItemFromBasket | Purchase);
+  ecommerce:
+    | ({
+        currencyCode: string;
+      } & (
+        | ClickProduct
+        | ImpressionsProduct
+        | ViewProduct
+        | AddItemToBasket
+        | RemoveItemFromBasket
+        | Purchase
+      ))
+    | ({ currencyCode?: never } & (PromoView | PromoClick));
 };
 
-export type SimpleActionType = keyof (ViewProduct & AddItemToBasket & RemoveItemFromBasket);
+export type SimpleActionType = keyof (ClickProduct &
+  ViewProduct &
+  AddItemToBasket &
+  RemoveItemFromBasket);
 
+type ClickProduct = {
+  click: WithProducts;
+};
+type ImpressionsProduct = {
+  impressions: Product[];
+};
 type ViewProduct = {
   detail: WithProducts;
 };
@@ -20,6 +38,30 @@ export type Purchase = {
     actionField: ActionField;
   } & WithProducts;
 };
+
+type PromoView = {
+  promoView: WithPromotions;
+};
+type PromoClick = {
+  promoClick: WithPromotions;
+};
+
+export type WithPromotions = {
+  promotions: PromoCampaign[];
+};
+
+export type PromoCampaign = {
+  id: string;
+} & Partial<{
+  /** Name of the promo campaign */
+  name: string;
+  /** Name of the ad banner */
+  creative: string;
+  /** Slot of the ad banner */
+  creative_slot: string;
+  /** Position of the ad banner */
+  position: string;
+}>;
 
 type WithProducts = {
   products: Product[];

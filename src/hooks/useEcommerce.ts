@@ -1,7 +1,15 @@
 import { useCallback, useContext, useMemo } from 'react';
 
 import { MetricaEcommerceContext } from '../components/YandexMetricaProvider';
-import { dataLayerPush, DataObject, Product, Purchase, SimpleActionType } from '../lib/ecommerce';
+import {
+  dataLayerPush,
+  DataObject,
+  Product,
+  type PromoCampaign,
+  Purchase,
+  SimpleActionType,
+  type WithPromotions,
+} from '../lib/ecommerce';
 
 export function useEcommerce<Defaults extends Pick<DataObject['ecommerce'], 'currencyCode'>>(
   defaults?: Defaults,
@@ -28,6 +36,24 @@ export function useEcommerce<Defaults extends Pick<DataObject['ecommerce'], 'cur
     [defaults?.currencyCode, pushToDataLayer],
   );
 
+  const trackImpressionsProduct = useCallback(
+    (
+      data: Partial<Pick<DataObject['ecommerce'], 'currencyCode'>> & {
+        products: Product[];
+      },
+    ) => {
+      pushToDataLayer({
+        currencyCode: defaults?.currencyCode ?? (data.currencyCode as string),
+        impressions: data.products,
+      });
+    },
+    [defaults?.currencyCode, pushToDataLayer],
+  );
+
+  const trackClickProduct = useMemo(
+    () => makeStandardTrackProduct('click'),
+    [makeStandardTrackProduct],
+  );
   const trackViewProduct = useMemo(
     () => makeStandardTrackProduct('detail'),
     [makeStandardTrackProduct],
@@ -39,6 +65,25 @@ export function useEcommerce<Defaults extends Pick<DataObject['ecommerce'], 'cur
   const trackRemoveItemFromBasket = useMemo(
     () => makeStandardTrackProduct('remove'),
     [makeStandardTrackProduct],
+  );
+
+  const trackPromoView = useCallback(
+    (data: WithPromotions) => {
+      pushToDataLayer({
+        promoView: data,
+      });
+    },
+    [pushToDataLayer],
+  );
+  const trackPromoClick = useCallback(
+    (data: { promotion: PromoCampaign }) => {
+      pushToDataLayer({
+        promoClick: {
+          promotions: [data.promotion],
+        },
+      });
+    },
+    [pushToDataLayer],
   );
 
   const trackPurchase = useCallback(
@@ -58,21 +103,15 @@ export function useEcommerce<Defaults extends Pick<DataObject['ecommerce'], 'cur
     [defaults?.currencyCode, pushToDataLayer],
   );
 
-  // TODO Возможные значения:
-  // impressions — просмотр списка товаров;
-  // click — клик по товару в списке;
-  // detail — просмотр товара; // DONE
-  // add — добавление товара в корзину; // DONE
-  // remove — удаление товара из корзины; // DONE
-  // purchase — покупка; // DONE
-  // promoView — просмотр внутренней рекламы;
-  // promoClick — клик по внутренней рекламе.
-
   return {
+    trackImpressionsProduct,
+    trackClickProduct,
     trackViewProduct,
     trackAddItemToBasket,
     trackRemoveItemFromBasket,
     trackPurchase,
+    trackPromoView,
+    trackPromoClick,
 
     pushToDataLayer,
   };
