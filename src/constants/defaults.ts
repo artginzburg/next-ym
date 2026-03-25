@@ -5,4 +5,7 @@ export const standardYMInitParameters = {
   clickmap: true,
   trackLinks: true,
   accurateTrackBounce: true,
+  webvisor: true,
+  ssr: true,
+  ecommerce: 'dataLayer',
 } satisfies InitParameters;

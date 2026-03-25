@@ -56,7 +56,7 @@ export const YandexMetricaProvider: FC<YandexMetricaProviderProps> = ({
     : 'https://mc.yandex.ru/metrika/tag.js';
 
   const sharedInit = `
-    ym(${id}, "init", ${JSON.stringify(initParameters ?? {})});
+    ym(${id}, "init", Object.assign({referrer: document.referrer, url: location.href}, ${JSON.stringify(initParameters ?? {})}));
     ${initEcommerce(initParameters?.ecommerce)}
   `;
 

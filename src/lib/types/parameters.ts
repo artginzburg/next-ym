@@ -89,6 +89,22 @@ export interface InitParameters {
    * @default false
    */
   triggerEvent?: boolean;
+  /**
+   * Enable SSR-compatible mode. The tag won't send a pageview on init,
+   * relying on SPA navigation events instead.
+   * @default false
+   */
+  ssr?: boolean;
+  /**
+   * Override the referrer sent with the init hit.
+   * Useful for SSR where `document.referrer` may not be available at init time.
+   */
+  referrer?: string;
+  /**
+   * Override the URL sent with the init hit.
+   * Useful for SSR where `location.href` may not reflect the correct page.
+   */
+  url?: string;
 }
 
 export interface FirstPartyParamsParameters {
