@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import { FC } from 'react';
 
 interface MetricaPixelProps {
@@ -8,13 +7,10 @@ interface MetricaPixelProps {
 /** @todo shouldUseAlternativeCDN */
 export const MetricaPixel: FC<MetricaPixelProps> = ({ tagID }) => (
   <div>
-    <Image
-      height="1"
-      width="1"
-      style={{ display: 'none', position: 'absolute', left: -9999 }}
+    <img
       src={`https://mc.yandex.ru/watch/${tagID}`}
+      style={{ position: 'absolute', left: -9999 }}
       alt=""
-      unoptimized
     />
   </div>
 );
