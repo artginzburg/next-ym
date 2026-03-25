@@ -1,7 +1,7 @@
 # Next.js Yandex Metrica
 
 [![npm version](https://badge.fury.io/js/next-yandex-metrica.svg)](https://badge.fury.io/js/next-yandex-metrica)
-[![codecov](https://codecov.io/github/reapziq/next-yandex-metrica/branch/main/graph/badge.svg?token=OZ8UX4NPK2)](https://codecov.io/github/reapziq/next-yandex-metrica)
+[![codecov](https://codecov.io/gh/artginzburg/next-ym/graph/badge.svg?token=OZ8UX4NPK2)](https://codecov.io/gh/artginzburg/next-ym)
 
 Yandex Metrica integration for Next.js v14+ (App Router)
 
@@ -17,11 +17,32 @@ Yandex Metrica integration for Next.js v14+ (App Router)
 
 ### Add the provider
 
+#### App Router
+
+```jsx
+// app/layout.tsx
+import { YandexMetricaProvider, standardYMInitParameters } from '@artginzburg/next-ym';
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body>
+        <YandexMetricaProvider initParameters={standardYMInitParameters}>
+          {children}
+        </YandexMetricaProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+#### Pages Router
+
 To enable analytics, include `YandexMetricaProvider` in the custom [`_app`](https://nextjs.org/docs/advanced-features/custom-app) component.
 
 ```jsx
 // pages/_app.tsx
-import { YandexMetricaProvider } from 'next-yandex-metrica';
+import { YandexMetricaProvider } from '@artginzburg/next-ym';
 
 export default function MyApp({ Component, pageProps }) {
   return (
@@ -34,6 +55,8 @@ export default function MyApp({ Component, pageProps }) {
   );
 }
 ```
+
+> **Note:** `YandexMetricaProvider` uses the `"use client"` directive.
 
 #### `YandexMetricaProvider` Props
 
