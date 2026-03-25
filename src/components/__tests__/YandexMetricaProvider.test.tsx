@@ -21,6 +21,9 @@ const METRICA_SCRIPT =
 const METRICA_SCRIPT_ALTERNATIVE_CDN =
   '(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)}; m[i].l=1*new Date(); for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }} k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)}) (window, document, "script", "https://cdn.jsdelivr.net/npm/yandex-metrica-watch/tag.js", "ym");';
 
+const initCall = (id: number, params = '{}') =>
+  `ym(${id}, "init", Object.assign({referrer: document.referrer, url: location.href}, ${params}));`;
+
 describe('YandexMetricaProvider', () => {
   it('renders', () => {
     render(
@@ -32,7 +35,7 @@ describe('YandexMetricaProvider', () => {
     expect(useTrackRouteChange).toHaveBeenCalledWith({ tagID: 444 });
 
     expect(document.getElementById('yandex-metrica')).toHaveTextContent(
-      `${METRICA_SCRIPT} ym(444, "init", {});`,
+      `${METRICA_SCRIPT} ${initCall(444)}`,
     );
     expect(document.getElementById('yandex-metrica-pixel')).toBeInTheDocument();
   });
@@ -48,7 +51,7 @@ describe('YandexMetricaProvider', () => {
     );
 
     expect(document.getElementById('yandex-metrica')).toHaveTextContent(
-      `${METRICA_SCRIPT} ym(444, "init", {"accurateTrackBounce":false,"clickmap":false});`,
+      `${METRICA_SCRIPT} ${initCall(444, '{"accurateTrackBounce":false,"clickmap":false}')}`,
     );
   });
 
@@ -62,7 +65,7 @@ describe('YandexMetricaProvider', () => {
     expect(useTrackRouteChange).toHaveBeenCalledWith({ tagID: 444 });
 
     expect(document.getElementById('yandex-metrica')).toHaveTextContent(
-      `${METRICA_SCRIPT_ALTERNATIVE_CDN} ym(444, "init", {});`,
+      `${METRICA_SCRIPT_ALTERNATIVE_CDN} ${initCall(444)}`,
     );
     expect(document.getElementById('yandex-metrica-pixel')).toBeInTheDocument();
   });
@@ -91,7 +94,7 @@ describe('YandexMetricaProvider', () => {
     );
 
     expect(document.getElementById('yandex-metrica')).toHaveTextContent(
-      `${METRICA_SCRIPT} ym(444, "init", {});`,
+      `${METRICA_SCRIPT} ${initCall(444)}`,
     );
   });
 });
