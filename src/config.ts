@@ -1,4 +1,4 @@
-import { METRICA_SCRIPT_URL } from './constants/urls';
+import { METRICA_SCRIPT_URL } from './constants/urls.js';
 
 /** Path where the proxied Metrica script will be available. */
 export const METRICA_PROXY_PATH = '/metrika-proxy.js';
