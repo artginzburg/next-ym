@@ -4,6 +4,7 @@ import { createContext, FC, ReactNode, useMemo } from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { standardYMInitParameters } from '../constants/defaults';
+import { METRICA_ALTERNATIVE_CDN_URL, METRICA_SCRIPT_URL } from '../constants/urls';
 import { useTrackRouteChange } from '../hooks/useTrackRouteChange';
 import { InitParameters } from '../lib/types/parameters';
 import { MetricaPixel } from './MetricaPixel';
@@ -51,9 +52,9 @@ export const YandexMetricaProvider: FC<YandexMetricaProviderProps> = ({
     return <>{children}</>;
   }
 
-  const scriptSrc = shouldUseAlternativeCDN
-    ? 'https://cdn.jsdelivr.net/npm/yandex-metrica-watch/tag.js'
-    : 'https://mc.yandex.ru/metrika/tag.js';
+  const proxyPath = process.env.NEXT_PUBLIC_YM_PROXY_PATH;
+  const scriptSrc =
+    proxyPath ?? (shouldUseAlternativeCDN ? METRICA_ALTERNATIVE_CDN_URL : METRICA_SCRIPT_URL);
 
   const sharedInit = `
     ym(${id}, "init", Object.assign({referrer: document.referrer, url: location.href}, ${JSON.stringify(
