@@ -46,6 +46,8 @@ Set your counter ID via environment variable (recommended):
 NEXT_PUBLIC_YANDEX_METRICA_ID=12345678
 ```
 
+Requires **Next.js 11+** and **React 17+**.
+
 ## Quick start
 
 ### App Router
@@ -84,7 +86,7 @@ export default function MyApp({ Component, pageProps }) {
 
 > `YandexMetricaProvider` is a client component (`"use client"`). Make it the top-most wrapper in your layout's `{children}`.
 
-That's it — pageviews are tracked automatically on every route change. No extra setup needed for SPA navigation.
+That's it — pageviews are tracked automatically on every route change (both App Router and Pages Router). No extra setup needed for SPA navigation: `YandexMetricaProvider` hooks into `next/navigation` (App Router) and `next/router` (Pages Router) internally and fires `ym(ID, 'hit', ...)` on every transition.
 
 ## Tracking events
 
@@ -201,6 +203,47 @@ export default withMetricaProxy(nextConfig);
 ```
 
 That's it. The provider auto-detects the proxy and uses it. No extra props needed.
+
+## JavaScript-disabled fallback (noscript)
+
+`YandexMetricaProvider` renders a `<noscript>` tracking pixel automatically — no configuration needed. Users with JavaScript disabled still count as visits in Metrica (the browser requests `https://mc.yandex.ru/watch/<tagID>` from inside the `<noscript>` tag).
+
+```html
+<noscript id="yandex-metrica-pixel">
+  <div>
+    <img src="https://mc.yandex.ru/watch/12345678" style="position:absolute;left:-9999px" alt="" />
+  </div>
+</noscript>
+```
+
+Limitations of the noscript path: only the page view is registered. Webvisor, goals, ecommerce events, and any `ym(...)` calls require JavaScript — so treat the noscript pixel as a bare-minimum reach measurement, not a full replacement.
+
+## Consent-based tracking (GDPR)
+
+To defer Metrica until the user consents, simply skip rendering the provider (or leave `tagID` unset) until you have consent. Metrica makes **zero network requests** while `YandexMetricaProvider` isn't mounted (or while `tagID`/`NEXT_PUBLIC_YANDEX_METRICA_ID` are both absent — in which case the provider just renders `children` and logs a dev warning).
+
+```tsx
+'use client';
+
+import { YandexMetricaProvider, standardYMInitParameters } from '@artginzburg/next-ym';
+import { useConsent } from '@/hooks/useConsent';
+
+export function AnalyticsGate({ children }: { children: React.ReactNode }) {
+  const { analyticsAllowed } = useConsent();
+
+  if (!analyticsAllowed) return <>{children}</>;
+
+  return (
+    <YandexMetricaProvider initParameters={standardYMInitParameters}>
+      {children}
+    </YandexMetricaProvider>
+  );
+}
+```
+
+When consent is later granted, the provider mounts and Metrica initializes. If consent is revoked, unmount the provider — the script has already loaded in this session (it can't be "un-loaded"), but no further `ym()` calls will be made by the library.
+
+Late opt-in is safe: whenever `YandexMetricaProvider` mounts, its `ym("init", ...)` call includes `url: location.href`, so the current page is recorded as a hit at mount time. You don't need a manual `router.refresh()` or an extra `ym("hit", ...)` call.
 
 ## Provider props
 
