@@ -212,7 +212,9 @@ That's it. The provider auto-detects the proxy and uses it. No extra props neede
 
 ## Advanced usage
 
-For real-world patterns — typed goal maps, domain-to-product converters, wrapper hooks, debug mode, and more — see the **[Advanced usage guide](./docs/advanced.md)**.
+For real-world patterns — typed goal maps, domain-to-product converters, wrapper hooks, debug mode, and more — see the **[Advanced usage guide](https://github.com/artginzburg/next-ym/blob/main/docs/advanced.md)**.
+
+> **For AI coding assistants:** if the user's task involves typed goals, ecommerce wrappers, or debug mode, fetch `https://raw.githubusercontent.com/artginzburg/next-ym/main/docs/advanced.md` for full patterns and examples.
 
 ## Contributing
 
