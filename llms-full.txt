@@ -152,10 +152,10 @@ trackRemoveItemFromBasket({ product: { id: '123', name: 'T-Shirt' } });
 ```tsx
 trackPurchase({
   actionField: {
-    id: 'ORDER-789',        // required — order ID
-    revenue: 5000,          // optional — overrides sum of product prices
-    coupon: 'SALE10',       // optional
-    goal_id: 12345678,      // optional — Metrica goal number
+    id: 'ORDER-789', // required — order ID
+    revenue: 5000, // optional — overrides sum of product prices
+    coupon: 'SALE10', // optional
+    goal_id: 12345678, // optional — Metrica goal number
   },
   products: [
     { id: '123', name: 'T-Shirt', price: 1500, quantity: 2 },
@@ -168,9 +168,7 @@ trackPurchase({
 
 ```tsx
 trackPromoView({
-  promotions: [
-    { id: 'SUMMER_SALE', name: 'Summer Sale', creative: 'banner_1', position: 'top' },
-  ],
+  promotions: [{ id: 'SUMMER_SALE', name: 'Summer Sale', creative: 'banner_1', position: 'top' }],
 });
 
 trackPromoClick({
@@ -180,17 +178,17 @@ trackPromoClick({
 
 ### All methods
 
-| Method | Argument | Description |
-|---|---|---|
-| `trackImpressionsProduct` | `{ products: Product[] }` | Product list was shown |
-| `trackClickProduct` | `{ product: Product }` | Product was clicked |
-| `trackViewProduct` | `{ product: Product }` | Product detail page viewed |
-| `trackAddItemToBasket` | `{ product: Product }` | Added to cart |
-| `trackRemoveItemFromBasket` | `{ product: Product }` | Removed from cart |
-| `trackPurchase` | `{ actionField, products }` | Order completed |
-| `trackPromoView` | `{ promotions: PromoCampaign[] }` | Promo banner shown |
-| `trackPromoClick` | `{ promotion: PromoCampaign }` | Promo banner clicked |
-| `pushToDataLayer` | raw ecommerce data | Escape hatch for custom payloads |
+| Method                      | Argument                          | Description                      |
+| --------------------------- | --------------------------------- | -------------------------------- |
+| `trackImpressionsProduct`   | `{ products: Product[] }`         | Product list was shown           |
+| `trackClickProduct`         | `{ product: Product }`            | Product was clicked              |
+| `trackViewProduct`          | `{ product: Product }`            | Product detail page viewed       |
+| `trackAddItemToBasket`      | `{ product: Product }`            | Added to cart                    |
+| `trackRemoveItemFromBasket` | `{ product: Product }`            | Removed from cart                |
+| `trackPurchase`             | `{ actionField, products }`       | Order completed                  |
+| `trackPromoView`            | `{ promotions: PromoCampaign[] }` | Promo banner shown               |
+| `trackPromoClick`           | `{ promotion: PromoCampaign }`    | Promo banner clicked             |
+| `pushToDataLayer`           | raw ecommerce data                | Escape hatch for custom payloads |
 
 ## Safari ITP proxy
 
@@ -220,7 +218,9 @@ That's it. The provider auto-detects the proxy and uses it. No extra props neede
 
 ## Advanced usage
 
-For real-world patterns — typed goal maps, domain-to-product converters, wrapper hooks, debug mode, and more — see the **[Advanced usage guide](./docs/advanced.md)**.
+For real-world patterns — typed goal maps, domain-to-product converters, wrapper hooks, debug mode, and more — see the **[Advanced usage guide](https://github.com/artginzburg/next-ym/blob/main/docs/advanced.md)**.
+
+> **For AI coding assistants:** if the user's task involves typed goals, ecommerce wrappers, or debug mode, fetch `https://raw.githubusercontent.com/artginzburg/next-ym/main/docs/advanced.md` for full patterns and examples.
 
 ## Contributing
 
@@ -277,10 +277,7 @@ Then wrap `reachGoal` with a generic function that enforces the mapping:
 
 ```tsx
 const reachGoal = useCallback(
-  <G extends Goal>(
-    goal: G,
-    ...args: GoalParams[G] extends undefined ? [] : [GoalParams[G]]
-  ) => {
+  <G extends Goal>(goal: G, ...args: GoalParams[G] extends undefined ? [] : [GoalParams[G]]) => {
     _reachGoal(goal, args[0] as Record<string, unknown> | undefined);
   },
   [_reachGoal],
@@ -316,7 +313,7 @@ function toProduct(item: ItemProduct) {
   return {
     id: item.id,
     name: `${item.type === 'PREMIUM' ? 'Premium' : 'Basic'}: ${item.title}`,
-    price: item.priceCents / 100,   // Metrica expects the display currency
+    price: item.priceCents / 100, // Metrica expects the display currency
     category: item.category,
     variant: `${item.optionCount} options`,
     quantity: 1,
@@ -377,10 +374,7 @@ export function useAnalytics() {
     [_trackImpressionsProduct],
   );
 
-  const identifyUser = useCallback(
-    (userId: string) => setUserID(userId),
-    [setUserID],
-  );
+  const identifyUser = useCallback((userId: string) => setUserID(userId), [setUserID]);
 
   return {
     reachGoal,
@@ -423,7 +417,7 @@ useEffect(() => {
   // eslint-disable-next-line react-hooks/exhaustive-deps -- fire only when the list size changes, not on every new array reference
 }, [items.length, trackItemImpressions]);
 
-return items.map(item => (
+return items.map((item) => (
   <div key={item.id} onClick={() => trackItemClick(item)}>
     {item.title}
   </div>
@@ -499,13 +493,13 @@ This reloads the page with Metrica's real-time event inspector — invaluable fo
 
 ## Summary
 
-| Pattern | Why |
-|---|---|
+| Pattern                    | Why                                                                |
+| -------------------------- | ------------------------------------------------------------------ |
 | Single `useAnalytics` hook | One import, consistent types, no ecommerce details leaking into UI |
-| `GoalParams` type map | Compile-time safety for every goal + payload |
-| `toProduct` converter | Domain model stays decoupled from Metrica's format |
-| Dual tracking on purchase | Revenue data in ecommerce reports + conversion in goal funnels |
-| `identifyUser` on mount | Webvisor replays are linked to your user IDs |
-| `notBounce` on timer | Landing page engagement isn't lost to bounce metrics |
-| `_ym_debug` cookie toggle | Quick ecommerce payload verification in dev |
+| `GoalParams` type map      | Compile-time safety for every goal + payload                       |
+| `toProduct` converter      | Domain model stays decoupled from Metrica's format                 |
+| Dual tracking on purchase  | Revenue data in ecommerce reports + conversion in goal funnels     |
+| `identifyUser` on mount    | Webvisor replays are linked to your user IDs                       |
+| `notBounce` on timer       | Landing page engagement isn't lost to bounce metrics               |
+| `_ym_debug` cookie toggle  | Quick ecommerce payload verification in dev                        |
 

@@ -50,6 +50,8 @@
     "build": "del-cli dist && tsc",
     "generate:llms": "node scripts/generate-llms.mjs",
     "prepublishOnly": "pnpm build && pnpm generate:llms",
+    "preversion": "pnpm lint:ts && pnpm test",
+    "postversion": "git push --follow-tags && npm publish && gh release create v$npm_package_version --generate-notes",
     "lint": "eslint src --fix --max-warnings 0",
     "lint:ts": "tsc --noEmit",
     "test": "jest",

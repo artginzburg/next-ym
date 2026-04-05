@@ -46,10 +46,7 @@ Then wrap `reachGoal` with a generic function that enforces the mapping:
 
 ```tsx
 const reachGoal = useCallback(
-  <G extends Goal>(
-    goal: G,
-    ...args: GoalParams[G] extends undefined ? [] : [GoalParams[G]]
-  ) => {
+  <G extends Goal>(goal: G, ...args: GoalParams[G] extends undefined ? [] : [GoalParams[G]]) => {
     _reachGoal(goal, args[0] as Record<string, unknown> | undefined);
   },
   [_reachGoal],
@@ -85,7 +82,7 @@ function toProduct(item: ItemProduct) {
   return {
     id: item.id,
     name: `${item.type === 'PREMIUM' ? 'Premium' : 'Basic'}: ${item.title}`,
-    price: item.priceCents / 100,   // Metrica expects the display currency
+    price: item.priceCents / 100, // Metrica expects the display currency
     category: item.category,
     variant: `${item.optionCount} options`,
     quantity: 1,
@@ -146,10 +143,7 @@ export function useAnalytics() {
     [_trackImpressionsProduct],
   );
 
-  const identifyUser = useCallback(
-    (userId: string) => setUserID(userId),
-    [setUserID],
-  );
+  const identifyUser = useCallback((userId: string) => setUserID(userId), [setUserID]);
 
   return {
     reachGoal,
@@ -192,7 +186,7 @@ useEffect(() => {
   // eslint-disable-next-line react-hooks/exhaustive-deps -- fire only when the list size changes, not on every new array reference
 }, [items.length, trackItemImpressions]);
 
-return items.map(item => (
+return items.map((item) => (
   <div key={item.id} onClick={() => trackItemClick(item)}>
     {item.title}
   </div>
@@ -268,12 +262,12 @@ This reloads the page with Metrica's real-time event inspector — invaluable fo
 
 ## Summary
 
-| Pattern | Why |
-|---|---|
+| Pattern                    | Why                                                                |
+| -------------------------- | ------------------------------------------------------------------ |
 | Single `useAnalytics` hook | One import, consistent types, no ecommerce details leaking into UI |
-| `GoalParams` type map | Compile-time safety for every goal + payload |
-| `toProduct` converter | Domain model stays decoupled from Metrica's format |
-| Dual tracking on purchase | Revenue data in ecommerce reports + conversion in goal funnels |
-| `identifyUser` on mount | Webvisor replays are linked to your user IDs |
-| `notBounce` on timer | Landing page engagement isn't lost to bounce metrics |
-| `_ym_debug` cookie toggle | Quick ecommerce payload verification in dev |
+| `GoalParams` type map      | Compile-time safety for every goal + payload                       |
+| `toProduct` converter      | Domain model stays decoupled from Metrica's format                 |
+| Dual tracking on purchase  | Revenue data in ecommerce reports + conversion in goal funnels     |
+| `identifyUser` on mount    | Webvisor replays are linked to your user IDs                       |
+| `notBounce` on timer       | Landing page engagement isn't lost to bounce metrics               |
+| `_ym_debug` cookie toggle  | Quick ecommerce payload verification in dev                        |

@@ -144,10 +144,10 @@ trackRemoveItemFromBasket({ product: { id: '123', name: 'T-Shirt' } });
 ```tsx
 trackPurchase({
   actionField: {
-    id: 'ORDER-789',        // required — order ID
-    revenue: 5000,          // optional — overrides sum of product prices
-    coupon: 'SALE10',       // optional
-    goal_id: 12345678,      // optional — Metrica goal number
+    id: 'ORDER-789', // required — order ID
+    revenue: 5000, // optional — overrides sum of product prices
+    coupon: 'SALE10', // optional
+    goal_id: 12345678, // optional — Metrica goal number
   },
   products: [
     { id: '123', name: 'T-Shirt', price: 1500, quantity: 2 },
@@ -160,9 +160,7 @@ trackPurchase({
 
 ```tsx
 trackPromoView({
-  promotions: [
-    { id: 'SUMMER_SALE', name: 'Summer Sale', creative: 'banner_1', position: 'top' },
-  ],
+  promotions: [{ id: 'SUMMER_SALE', name: 'Summer Sale', creative: 'banner_1', position: 'top' }],
 });
 
 trackPromoClick({
@@ -172,17 +170,17 @@ trackPromoClick({
 
 ### All methods
 
-| Method | Argument | Description |
-|---|---|---|
-| `trackImpressionsProduct` | `{ products: Product[] }` | Product list was shown |
-| `trackClickProduct` | `{ product: Product }` | Product was clicked |
-| `trackViewProduct` | `{ product: Product }` | Product detail page viewed |
-| `trackAddItemToBasket` | `{ product: Product }` | Added to cart |
-| `trackRemoveItemFromBasket` | `{ product: Product }` | Removed from cart |
-| `trackPurchase` | `{ actionField, products }` | Order completed |
-| `trackPromoView` | `{ promotions: PromoCampaign[] }` | Promo banner shown |
-| `trackPromoClick` | `{ promotion: PromoCampaign }` | Promo banner clicked |
-| `pushToDataLayer` | raw ecommerce data | Escape hatch for custom payloads |
+| Method                      | Argument                          | Description                      |
+| --------------------------- | --------------------------------- | -------------------------------- |
+| `trackImpressionsProduct`   | `{ products: Product[] }`         | Product list was shown           |
+| `trackClickProduct`         | `{ product: Product }`            | Product was clicked              |
+| `trackViewProduct`          | `{ product: Product }`            | Product detail page viewed       |
+| `trackAddItemToBasket`      | `{ product: Product }`            | Added to cart                    |
+| `trackRemoveItemFromBasket` | `{ product: Product }`            | Removed from cart                |
+| `trackPurchase`             | `{ actionField, products }`       | Order completed                  |
+| `trackPromoView`            | `{ promotions: PromoCampaign[] }` | Promo banner shown               |
+| `trackPromoClick`           | `{ promotion: PromoCampaign }`    | Promo banner clicked             |
+| `pushToDataLayer`           | raw ecommerce data                | Escape hatch for custom payloads |
 
 ## Safari ITP proxy
 
