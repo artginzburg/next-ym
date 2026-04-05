@@ -210,6 +210,10 @@ That's it. The provider auto-detects the proxy and uses it. No extra props neede
 | `strategy`                | `ScriptProps['strategy']` | [next/script strategy](https://nextjs.org/docs/api-reference/next/script#strategy). Default: `afterInteractive`.                                           |
 | `shouldUseAlternativeCDN` | `boolean`                 | Use the [alternative CDN](https://yandex.ru/support/metrica/general/counter-general.html?lang=en#other__cdn).                                              |
 
+## Advanced usage
+
+For real-world patterns — typed goal maps, domain-to-product converters, wrapper hooks, debug mode, and more — see the **[Advanced usage guide](./docs/advanced.md)**.
+
 ## Contributing
 
 If your use case is not supported, please [create an Issue](https://github.com/artginzburg/next-ym/issues). Feature requests and PRs are welcome.
