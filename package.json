@@ -1,6 +1,6 @@
 {
   "name": "@artginzburg/next-ym",
-  "version": "1.3.5",
+  "version": "1.3.6",
   "description": "Yandex Metrica for Next.js — App Router, ecommerce, Safari ITP proxy, auto SPA tracking",
   "files": [
     "dist"
