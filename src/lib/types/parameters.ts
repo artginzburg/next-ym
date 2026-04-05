@@ -90,9 +90,9 @@ export interface InitParameters {
    */
   triggerEvent?: boolean;
   /**
-   * Enable SSR-compatible mode. The tag won't send a pageview on init,
-   * relying on SPA navigation events instead.
-   * @default false
+   * A technical parameter used by the ad tag.
+   * Setting this to `true` apparently prevents normal counter initialization.
+   * Omit or set to `false` for standard usage.
    */
   ssr?: boolean;
   /**
