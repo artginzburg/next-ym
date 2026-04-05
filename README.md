@@ -24,7 +24,7 @@ There are several Yandex Metrica packages for Next.js. Here's how they compare:
 | **Last updated**      |       Apr 2026       |      Sep 2025       |       Nov 2019       |           Dec 2025            |
 | **Weekly downloads**  |         292          |         846         |        9,161         |              19               |
 
-> `react-yandex-metrika` leads in downloads purely by age (2017) — it hasn't been updated since 2019 and has no Next.js App Router support.
+> `react-yandex-metrika` leads in downloads purely by age (2017) — it hasn't been updated since 2019 and has no Next.js App Router support. **Migrating from it?** See the [migration guide](https://github.com/artginzburg/next-ym/blob/main/docs/migrating-from-react-yandex-metrika.md).
 
 ## Installation
 

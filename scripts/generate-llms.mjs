@@ -12,6 +12,7 @@ const read = (p) => readFileSync(resolve(root, p), 'utf8');
 const pkg = JSON.parse(read('package.json'));
 const readme = read('README.md');
 const advanced = read('docs/advanced.md');
+const migration = read('docs/migrating-from-react-yandex-metrika.md');
 
 const repoUrl = `https://github.com/${pkg.repository}`;
 const rawUrl = `${repoUrl.replace('github.com', 'raw.githubusercontent.com')}/main`;
@@ -25,6 +26,7 @@ const llmsTxt = `# ${pkg.name}
 
 - [README](${rawUrl}/README.md) — installation, quick start, ecommerce API, Safari ITP proxy, provider props
 - [Advanced usage](${rawUrl}/docs/advanced.md) — typed goals, wrapper hook pattern, domain-to-product mapping, debug mode
+- [Migrating from react-yandex-metrika](${rawUrl}/docs/migrating-from-react-yandex-metrika.md) — step-by-step API mapping, route tracking, event calls
 
 ## Optional
 
@@ -45,6 +47,10 @@ ${readme}
 ---
 
 ${advanced}
+
+---
+
+${migration}
 `;
 
 writeFileSync(resolve(root, 'llms.txt'), llmsTxt);

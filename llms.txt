@@ -6,6 +6,7 @@
 
 - [README](https://raw.githubusercontent.com/artginzburg/next-ym/main/README.md) — installation, quick start, ecommerce API, Safari ITP proxy, provider props
 - [Advanced usage](https://raw.githubusercontent.com/artginzburg/next-ym/main/docs/advanced.md) — typed goals, wrapper hook pattern, domain-to-product mapping, debug mode
+- [Migrating from react-yandex-metrika](https://raw.githubusercontent.com/artginzburg/next-ym/main/docs/migrating-from-react-yandex-metrika.md) — step-by-step API mapping, route tracking, event calls
 
 ## Optional
 
