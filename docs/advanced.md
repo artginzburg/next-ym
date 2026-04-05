@@ -241,13 +241,9 @@ After setting up `withMetricaProxy` in `next.config.ts`, check that the Metrica 
 
 1. Open the site in **Safari** with DevTools → Network tab.
 2. Reload the page.
-3. Look for the script request. With the proxy enabled, the request URL should be your own origin, e.g. `https://your-site.com/metrika/tag.js`. If you still see `https://mc.yandex.ru/metrika/tag.js`, the proxy isn't being picked up.
+3. Look for the script request. With the proxy enabled, the request URL should be your own origin: `https://your-site.com/metrika-proxy.js`. If you still see `https://mc.yandex.ru/metrika/tag.js`, the proxy isn't being picked up.
 
-Common reasons the proxy isn't detected:
-
-- `NEXT_PUBLIC_YM_PROXY_PATH` env var is missing from the runtime (the proxy is auto-set by `withMetricaProxy`, but if you deploy a prebuilt Next.js app and forget to propagate env vars, the provider falls back to the CDN URL).
-- `withMetricaProxy(nextConfig)` wasn't re-exported as the default — `export default withMetricaProxy(nextConfig)` is the correct form.
-- Browser cache is serving an older HTML. Hard-reload (⌘⇧R) or test in a private window.
+If the proxy isn't detected, check that `withMetricaProxy(nextConfig)` is actually the default export of `next.config.ts` — `export default withMetricaProxy(nextConfig)` is the correct form. That's all the setup the proxy needs; `withMetricaProxy` wires both the rewrite and the env var automatically.
 
 Only the tag script (`tag.js`) is proxied — telemetry beacons and the `watch/<tagID>` pixel still go to `mc.yandex.ru` directly. Routing the script through your domain is enough to let Metrica set first-party cookies and satisfy Safari ITP.
 
