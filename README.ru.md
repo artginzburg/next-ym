@@ -46,6 +46,8 @@ ID счётчика задаётся через переменную окруж�
 NEXT_PUBLIC_YANDEX_METRICA_ID=12345678
 ```
 
+Требуется **Next.js 11+** и **React 17+**.
+
 ## Быстрый старт
 
 ### App Router
@@ -84,7 +86,7 @@ export default function MyApp({ Component, pageProps }) {
 
 > `YandexMetricaProvider` — клиентский компонент (`"use client"`). Помещайте его как самый верхний враппер внутри `{children}` вашего layout-а.
 
-Всё. Просмотры страниц трекаются автоматически при каждом переходе. Никакой дополнительной настройки для SPA-навигации не требуется.
+Всё. Просмотры страниц трекаются автоматически при каждом переходе (и в App Router, и в Pages Router). Никакой дополнительной настройки для SPA-навигации не требуется: `YandexMetricaProvider` внутри подписывается на `next/navigation` (App Router) и `next/router` (Pages Router) и сам отправляет `ym(ID, 'hit', ...)` на каждый переход.
 
 ## Отправка событий
 
@@ -203,6 +205,47 @@ export default withMetricaProxy(nextConfig);
 ```
 
 Всё. Провайдер сам обнаружит прокси и начнёт его использовать. Доп. пропсы не нужны.
+
+## Fallback для JS-disabled (noscript)
+
+`YandexMetricaProvider` автоматически рендерит `<noscript>` с tracking-пикселем — настраивать ничего не нужно. Пользователи с отключённым JavaScript всё равно учитываются как визиты в Метрике (браузер запросит `https://mc.yandex.ru/watch/<tagID>` внутри `<noscript>`).
+
+```html
+<noscript id="yandex-metrica-pixel">
+  <div>
+    <img src="https://mc.yandex.ru/watch/12345678" style="position:absolute;left:-9999px" alt="" />
+  </div>
+</noscript>
+```
+
+Ограничения noscript-пути: регистрируется только факт просмотра страницы. Вебвизор, цели, ecommerce-события и любые вызовы `ym(...)` требуют JavaScript — поэтому воспринимайте noscript-пиксель как минимальное измерение охвата, а не полноценную замену.
+
+## Tracking по согласию (GDPR)
+
+Чтобы отложить инициализацию Метрики до получения согласия, просто не рендерите провайдер (или оставьте `tagID` пустым), пока нет consent. Метрика делает **ноль сетевых запросов**, пока `YandexMetricaProvider` не смонтирован (или пока `tagID`/`NEXT_PUBLIC_YANDEX_METRICA_ID` оба отсутствуют — в этом случае провайдер просто рендерит `children` и выводит dev-warning).
+
+```tsx
+'use client';
+
+import { YandexMetricaProvider, standardYMInitParameters } from '@artginzburg/next-ym';
+import { useConsent } from '@/hooks/useConsent';
+
+export function AnalyticsGate({ children }: { children: React.ReactNode }) {
+  const { analyticsAllowed } = useConsent();
+
+  if (!analyticsAllowed) return <>{children}</>;
+
+  return (
+    <YandexMetricaProvider initParameters={standardYMInitParameters}>
+      {children}
+    </YandexMetricaProvider>
+  );
+}
+```
+
+Когда согласие получено позже, провайдер монтируется, и Метрика инициализируется. Если согласие отозвано — размонтируйте провайдер (скрипт в рамках сессии уже загружен и «выгрузить» его нельзя, но новых вызовов `ym()` библиотека не сделает).
+
+Поздний opt-in безопасен: при каждом монтировании `YandexMetricaProvider` вызов `ym("init", ...)` включает `url: location.href`, поэтому текущая страница засчитывается как hit в момент монтирования. Никакого ручного `router.refresh()` или дополнительного `ym("hit", ...)` не нужно.
 
 ## Пропсы провайдера
 
