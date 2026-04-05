@@ -1,0 +1,511 @@
+# @artginzburg/next-ym
+
+> Yandex Metrica for Next.js — App Router, ecommerce, Safari ITP proxy, auto SPA tracking
+
+> Generated from README.md and docs/advanced.md. Do not edit by hand.
+
+---
+
+# @artginzburg/next-ym
+
+[![npm version](https://img.shields.io/npm/v/@artginzburg/next-ym)](https://www.npmjs.com/package/@artginzburg/next-ym)
+[![npm downloads](https://img.shields.io/npm/dw/@artginzburg/next-ym)](https://www.npmjs.com/package/@artginzburg/next-ym)
+[![codecov](https://codecov.io/gh/artginzburg/next-ym/graph/badge.svg?token=OZ8UX4NPK2)](https://codecov.io/gh/artginzburg/next-ym)
+
+The most complete **Yandex Metrica** integration for **Next.js** — App Router, Pages Router, ecommerce, Safari ITP proxy, and automatic SPA tracking out of the box.
+
+## Why this package?
+
+There are several Yandex Metrica packages for Next.js. Here's how they compare:
+
+| Feature               | @artginzburg/next-ym | next-yandex-metrica | react-yandex-metrika | @koiztech/next-yandex-metrika |
+| --------------------- | :------------------: | :-----------------: | :------------------: | :---------------------------: |
+| **App Router**        |          ✅          |         ✅          |          ❌          |              ✅               |
+| **Pages Router**      |          ✅          |         ✅          |          ✅          |              ❌               |
+| **Auto SPA tracking** |          ✅          |      ❌ manual      |          ❌          |              ❌               |
+| **Ecommerce hooks**   |       ✅ typed       |         ❌          |          ❌          |              ❌               |
+| **Safari ITP proxy**  |     ✅ built-in      |         ❌          |          ❌          |              ❌               |
+| **TypeScript**        |       ✅ full        |         ✅          |          ❌          |            partial            |
+| **noscript fallback** |          ✅          |         ❌          |          ✅          |              ❌               |
+| **Env-based tag ID**  |          ✅          |         ❌          |          ❌          |              ❌               |
+| **Last updated**      |       Apr 2026       |      Sep 2025       |       Nov 2019       |           Dec 2025            |
+| **Weekly downloads**  |         292          |         846         |        9,161         |              19               |
+
+> `react-yandex-metrika` leads in downloads purely by age (2017) — it hasn't been updated since 2019 and has no Next.js App Router support.
+
+## Installation
+
+```bash
+pnpm add @artginzburg/next-ym
+```
+
+or
+
+```bash
+npm install @artginzburg/next-ym
+```
+
+Set your counter ID via environment variable (recommended):
+
+```env
+NEXT_PUBLIC_YANDEX_METRICA_ID=12345678
+```
+
+## Quick start
+
+### App Router
+
+```tsx
+// app/layout.tsx
+import { YandexMetricaProvider, standardYMInitParameters } from '@artginzburg/next-ym';
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        <YandexMetricaProvider initParameters={standardYMInitParameters}>
+          {children}
+        </YandexMetricaProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+### Pages Router
+
+```tsx
+// pages/_app.tsx
+import { YandexMetricaProvider, standardYMInitParameters } from '@artginzburg/next-ym';
+
+export default function MyApp({ Component, pageProps }) {
+  return (
+    <YandexMetricaProvider initParameters={standardYMInitParameters}>
+      <Component {...pageProps} />
+    </YandexMetricaProvider>
+  );
+}
+```
+
+> `YandexMetricaProvider` is a client component (`"use client"`). Make it the top-most wrapper in your layout's `{children}`.
+
+That's it — pageviews are tracked automatically on every route change. No extra setup needed for SPA navigation.
+
+## Tracking events
+
+```tsx
+import { useMetrica } from '@artginzburg/next-ym';
+
+export function BuyButton() {
+  const { reachGoal } = useMetrica();
+
+  return <button onClick={() => reachGoal('purchase-click')}>Buy now</button>;
+}
+```
+
+`useMetrica` exposes typed methods: `reachGoal`, `notBounce`, `setUserID`, `userParams`, and `ymEvent` for any other [Yandex.Metrica method](https://yandex.com/support/metrica/objects/method-reference.html).
+
+You can also use the `ym` function directly:
+
+```tsx
+import { ym } from '@artginzburg/next-ym';
+
+ym(12345678, 'reachGoal', 'cta-click');
+```
+
+## Ecommerce
+
+Full typed ecommerce support via the `useEcommerce` hook. Requires `ecommerce: 'dataLayer'` in init parameters (included in `standardYMInitParameters`).
+
+```tsx
+import { useEcommerce } from '@artginzburg/next-ym';
+
+// currencyCode is set once and applied to all calls
+const { trackClickProduct, trackAddItemToBasket, trackPurchase } = useEcommerce({
+  currencyCode: 'RUB',
+});
+```
+
+### Product tracking
+
+Each product accepts: `id`, `name` (at least one required), and optional `brand`, `category`, `price`, `quantity`, `variant`, `coupon`, `discount`, `list`, `position`.
+
+```tsx
+// Track product list impressions (accepts an array of products)
+trackImpressionsProduct({
+  products: [
+    { id: '123', name: 'T-Shirt', price: 1500, list: 'Homepage' },
+    { id: '456', name: 'Hoodie', price: 3500, list: 'Homepage' },
+  ],
+});
+
+// Track product click / detail view / add to cart / remove from cart
+// (all accept a single product)
+trackClickProduct({ product: { id: '123', name: 'T-Shirt' } });
+trackViewProduct({ product: { id: '123', name: 'T-Shirt', price: 1500 } });
+trackAddItemToBasket({ product: { id: '123', name: 'T-Shirt', price: 1500, quantity: 1 } });
+trackRemoveItemFromBasket({ product: { id: '123', name: 'T-Shirt' } });
+```
+
+### Purchase
+
+```tsx
+trackPurchase({
+  actionField: {
+    id: 'ORDER-789',        // required — order ID
+    revenue: 5000,          // optional — overrides sum of product prices
+    coupon: 'SALE10',       // optional
+    goal_id: 12345678,      // optional — Metrica goal number
+  },
+  products: [
+    { id: '123', name: 'T-Shirt', price: 1500, quantity: 2 },
+    { id: '456', name: 'Hoodie', price: 2000, quantity: 1 },
+  ],
+});
+```
+
+### Promo campaigns
+
+```tsx
+trackPromoView({
+  promotions: [
+    { id: 'SUMMER_SALE', name: 'Summer Sale', creative: 'banner_1', position: 'top' },
+  ],
+});
+
+trackPromoClick({
+  promotion: { id: 'SUMMER_SALE', name: 'Summer Sale' },
+});
+```
+
+### All methods
+
+| Method | Argument | Description |
+|---|---|---|
+| `trackImpressionsProduct` | `{ products: Product[] }` | Product list was shown |
+| `trackClickProduct` | `{ product: Product }` | Product was clicked |
+| `trackViewProduct` | `{ product: Product }` | Product detail page viewed |
+| `trackAddItemToBasket` | `{ product: Product }` | Added to cart |
+| `trackRemoveItemFromBasket` | `{ product: Product }` | Removed from cart |
+| `trackPurchase` | `{ actionField, products }` | Order completed |
+| `trackPromoView` | `{ promotions: PromoCampaign[] }` | Promo banner shown |
+| `trackPromoClick` | `{ promotion: PromoCampaign }` | Promo banner clicked |
+| `pushToDataLayer` | raw ecommerce data | Escape hatch for custom payloads |
+
+## Safari ITP proxy
+
+Safari's Intelligent Tracking Prevention blocks third-party scripts from `mc.yandex.ru`. The built-in proxy makes the Metrica script appear as first-party:
+
+```ts
+// next.config.ts
+import { withMetricaProxy } from '@artginzburg/next-ym/config';
+
+const nextConfig = {
+  /* your config */
+};
+
+export default withMetricaProxy(nextConfig);
+```
+
+That's it. The provider auto-detects the proxy and uses it. No extra props needed.
+
+## Provider props
+
+| Prop                      | Type                      | Description                                                                                                                                                |
+| ------------------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `tagID`                   | `number`                  | Yandex Metrica tag ID. Optional if `NEXT_PUBLIC_YANDEX_METRICA_ID` env var is set.                                                                         |
+| `initParameters`          | `InitParameters`          | [Initialization parameters](https://yandex.com/support/metrica/code/counter-initialize.html). Use `standardYMInitParameters` for the recommended defaults. |
+| `strategy`                | `ScriptProps['strategy']` | [next/script strategy](https://nextjs.org/docs/api-reference/next/script#strategy). Default: `afterInteractive`.                                           |
+| `shouldUseAlternativeCDN` | `boolean`                 | Use the [alternative CDN](https://yandex.ru/support/metrica/general/counter-general.html?lang=en#other__cdn).                                              |
+
+## Advanced usage
+
+For real-world patterns — typed goal maps, domain-to-product converters, wrapper hooks, debug mode, and more — see the **[Advanced usage guide](./docs/advanced.md)**.
+
+## Contributing
+
+If your use case is not supported, please [create an Issue](https://github.com/artginzburg/next-ym/issues). Feature requests and PRs are welcome.
+
+
+---
+
+# Advanced usage
+
+Real-world patterns for building a type-safe analytics layer on top of `@artginzburg/next-ym`.
+
+## The wrapper hook pattern
+
+Instead of calling `useMetrica` and `useEcommerce` directly in every component, create a single `useAnalytics` hook that centralizes all tracking logic, enforces types, and maps your domain model to Yandex Metrica's format.
+
+```tsx
+// hooks/useAnalytics.ts
+'use client';
+
+import { useEcommerce, useMetrica } from '@artginzburg/next-ym';
+import { useCallback } from 'react';
+```
+
+### Typed goals
+
+Define a `GoalParams` map where every key is a goal name and every value is its expected payload (or `undefined` for goals with no params). This gives you compile-time safety — you can't send a goal with wrong params or forget a required field.
+
+```tsx
+type GoalParams = {
+  // Conversions
+  purchase: { itemId: string; type: string; category: string; price: number };
+  item_created_free: { itemId: string; type: string };
+  item_downloaded: { itemId: string };
+
+  // Payments
+  top_up: { amount: number };
+  top_up_started: { amountCents: number };
+
+  // Auth
+  signup: undefined;
+  login: undefined;
+
+  // Engagement
+  review_submitted: { itemId: string; rating: number };
+  referral_link_copied: undefined;
+  guidelines_uploaded: { fileName: string };
+};
+
+type Goal = keyof GoalParams;
+```
+
+Then wrap `reachGoal` with a generic function that enforces the mapping:
+
+```tsx
+const reachGoal = useCallback(
+  <G extends Goal>(
+    goal: G,
+    ...args: GoalParams[G] extends undefined ? [] : [GoalParams[G]]
+  ) => {
+    _reachGoal(goal, args[0] as Record<string, unknown> | undefined);
+  },
+  [_reachGoal],
+);
+```
+
+Now TypeScript enforces correctness:
+
+```tsx
+reachGoal('signup');                          // OK — no params
+reachGoal('signup', { foo: 1 });             // Error — signup takes no params
+reachGoal('purchase', { itemId: '1', ... }); // OK — all fields required
+reachGoal('purchase');                        // Error — params required
+reachGoal('purchase', { itemId: '1' });      // Error — missing fields
+```
+
+### Domain-to-product mapping
+
+Yandex Metrica ecommerce expects products in a specific format (`id`, `name`, `price`, `category`, `variant`, etc.). Your domain objects probably look different. Define a converter:
+
+```tsx
+interface ItemProduct {
+  id: string;
+  title: string;
+  type: 'PREMIUM' | 'BASIC';
+  category: string;
+  optionCount: number;
+  /** Price in cents as stored in your DB. */
+  priceCents: number;
+}
+
+function toProduct(item: ItemProduct) {
+  return {
+    id: item.id,
+    name: `${item.type === 'PREMIUM' ? 'Premium' : 'Basic'}: ${item.title}`,
+    price: item.priceCents / 100,   // Metrica expects the display currency
+    category: item.category,
+    variant: `${item.optionCount} options`,
+    quantity: 1,
+  };
+}
+```
+
+### Ecommerce wrappers
+
+Combine the converter with `useEcommerce` methods. Each wrapper is a single-purpose function that components can call with your domain object — no ecommerce knowledge needed at the call site.
+
+```tsx
+export function useAnalytics() {
+  const { reachGoal: _reachGoal, setUserID, notBounce } = useMetrica();
+  const {
+    trackPurchase: _trackPurchase,
+    trackViewProduct: _trackViewProduct,
+    trackClickProduct: _trackClickProduct,
+    trackImpressionsProduct: _trackImpressionsProduct,
+  } = useEcommerce({ currencyCode: 'USD' });
+
+  // ... reachGoal wrapper from above ...
+
+  /** Full purchase: ecommerce event + goal. */
+  const trackItemPurchase = useCallback(
+    (item: ItemProduct) => {
+      const product = toProduct(item);
+      _trackPurchase({
+        actionField: { id: item.id, revenue: product.price },
+        products: [product],
+      });
+      reachGoal('purchase', {
+        itemId: item.id,
+        type: item.type,
+        category: item.category,
+        price: product.price,
+      });
+    },
+    [_trackPurchase, reachGoal],
+  );
+
+  const trackItemView = useCallback(
+    (item: ItemProduct) => _trackViewProduct({ product: toProduct(item) }),
+    [_trackViewProduct],
+  );
+
+  const trackItemClick = useCallback(
+    (item: ItemProduct) => _trackClickProduct({ product: toProduct(item) }),
+    [_trackClickProduct],
+  );
+
+  /** Bulk impressions — call when a list of items renders. */
+  const trackItemImpressions = useCallback(
+    (items: ItemProduct[]) => {
+      if (items.length === 0) return;
+      _trackImpressionsProduct({ products: items.map(toProduct) });
+    },
+    [_trackImpressionsProduct],
+  );
+
+  const identifyUser = useCallback(
+    (userId: string) => setUserID(userId),
+    [setUserID],
+  );
+
+  return {
+    reachGoal,
+    trackItemPurchase,
+    trackItemView,
+    trackItemClick,
+    trackItemImpressions,
+    identifyUser,
+    notBounce,
+  };
+}
+```
+
+## Using the wrapper in components
+
+### User identification
+
+Call `identifyUser` once when the user session is known. This links all subsequent Webvisor sessions and segments to your internal user ID. Only send the ID — no PII.
+
+```tsx
+// components/DashboardLayout.tsx
+const { identifyUser } = useAnalytics();
+const user = useUser();
+
+useEffect(() => {
+  if (user?.id) identifyUser(user.id);
+}, [user?.id, identifyUser]);
+```
+
+### Impressions on list render
+
+Track impressions when a product list is displayed. Use the list length as a dependency — not the array reference — to avoid re-firing on every render (arrays get new references on each render even if the data hasn't changed).
+
+```tsx
+// components/ItemList.tsx
+const { trackItemImpressions, trackItemClick } = useAnalytics();
+
+useEffect(() => {
+  trackItemImpressions(items);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- fire only when the list size changes, not on every new array reference
+}, [items.length, trackItemImpressions]);
+
+return items.map(item => (
+  <div key={item.id} onClick={() => trackItemClick(item)}>
+    {item.title}
+  </div>
+));
+```
+
+### Detail page view
+
+Fire a product view event when the detail page mounts. Guard against empty data. Similar to impressions, use a stable primitive (`item?.id`) as the dependency to avoid re-firing when the object reference changes but the item is the same.
+
+```tsx
+// components/ItemDetail.tsx
+const { trackItemView } = useAnalytics();
+
+useEffect(() => {
+  if (item) trackItemView(item);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- track once per item, not on every object reference change
+}, [item?.id, trackItemView]);
+```
+
+### Purchase with dual tracking
+
+A purchase fires both an ecommerce event (for revenue reports) and a goal (for conversion funnels). The wrapper does this in one call:
+
+```tsx
+// After successful payment
+const { trackItemPurchase } = useAnalytics();
+trackItemPurchase(item);
+// This sends both:
+//   1. ecommerce purchase with actionField + products
+//   2. reachGoal('purchase', { ... })
+```
+
+### Bounce prevention on landing pages
+
+> **Note:** If you already have `accurateTrackBounce: true` in your init parameters (included in `standardYMInitParameters`), Metrica automatically sends a "not bounce" signal after 15 seconds. The manual approach below is only useful if you need a **different threshold per page** or want to tie it to a specific user action (scroll depth, button click, etc.) instead of a timer.
+
+```tsx
+// components/LandingPage.tsx
+const { notBounce } = useAnalytics();
+
+// Example: mark as engaged after 30s (overriding the global 15s default)
+useEffect(() => {
+  const timer = setTimeout(notBounce, 30000);
+  return () => clearTimeout(timer);
+}, [notBounce]);
+```
+
+## Debug mode
+
+Toggle Yandex Metrica's built-in debug overlay. Enabling sets `_ym_debug` as a query parameter; Metrica then persists it as a cookie. To disable, you must clear the cookie — removing the query parameter alone is not enough.
+
+```tsx
+async function toggleYmDebug() {
+  const cookie = await cookieStore.get('_ym_debug');
+
+  if (cookie?.value === '1') {
+    // Metrica sets the cookie on ".example.com" (with leading dot).
+    // cookieStore.set/delete cannot target that domain, so use document.cookie.
+    document.cookie = `_ym_debug=0; domain=.${location.hostname}; path=/`;
+    const params = new URLSearchParams(location.search);
+    params.delete('_ym_debug');
+    location.search = params.toString();
+  } else {
+    const params = new URLSearchParams(location.search);
+    params.set('_ym_debug', '2');
+    location.search = params.toString();
+  }
+}
+```
+
+This reloads the page with Metrica's real-time event inspector — invaluable for verifying ecommerce payloads during development.
+
+## Summary
+
+| Pattern | Why |
+|---|---|
+| Single `useAnalytics` hook | One import, consistent types, no ecommerce details leaking into UI |
+| `GoalParams` type map | Compile-time safety for every goal + payload |
+| `toProduct` converter | Domain model stays decoupled from Metrica's format |
+| Dual tracking on purchase | Revenue data in ecommerce reports + conversion in goal funnels |
+| `identifyUser` on mount | Webvisor replays are linked to your user IDs |
+| `notBounce` on timer | Landing page engagement isn't lost to bounce metrics |
+| `_ym_debug` cookie toggle | Quick ecommerce payload verification in dev |
+

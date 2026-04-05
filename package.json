@@ -48,7 +48,8 @@
   ],
   "scripts": {
     "build": "del-cli dist && tsc",
-    "prepublishOnly": "pnpm build",
+    "generate:llms": "node scripts/generate-llms.mjs",
+    "prepublishOnly": "pnpm build && pnpm generate:llms",
     "lint": "eslint src --fix --max-warnings 0",
     "lint:ts": "tsc --noEmit",
     "test": "jest",

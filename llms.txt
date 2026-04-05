@@ -1,0 +1,12 @@
+# @artginzburg/next-ym
+
+> Yandex Metrica for Next.js — App Router, ecommerce, Safari ITP proxy, auto SPA tracking
+
+## Docs
+
+- [README](https://raw.githubusercontent.com/artginzburg/next-ym/main/README.md) — installation, quick start, ecommerce API, Safari ITP proxy, provider props
+- [Advanced usage](https://raw.githubusercontent.com/artginzburg/next-ym/main/docs/advanced.md) — typed goals, wrapper hook pattern, domain-to-product mapping, debug mode
+
+## Optional
+
+- [Full documentation](https://raw.githubusercontent.com/artginzburg/next-ym/main/llms-full.txt) — README and advanced guide in a single file
