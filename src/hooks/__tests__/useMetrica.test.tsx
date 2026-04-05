@@ -15,6 +15,8 @@ const Providers: FC<{ children: ReactNode }> = ({ children }) => {
 };
 
 describe('useMetrica', () => {
+  beforeEach(() => YM_MOCK.mockClear());
+
   it('calls ym methods with correct parameters', () => {
     const { result } = renderHook(() => useMetrica(), { wrapper: Providers });
     const { notBounce, reachGoal, setUserID, userParams, ymEvent } = result.current;
@@ -43,5 +45,30 @@ describe('useMetrica', () => {
     });
 
     expect(YM_MOCK).toHaveBeenCalledTimes(5);
+  });
+
+  it('skips redundant setUserID calls with the same ID', () => {
+    const { result } = renderHook(() => useMetrica(), { wrapper: Providers });
+
+    result.current.setUserID('12345');
+    result.current.setUserID('12345');
+    result.current.setUserID('12345');
+
+    expect(YM_MOCK).toHaveBeenCalledTimes(1);
+    expect(YM_MOCK).toHaveBeenCalledWith(444, 'setUserID', '12345');
+  });
+
+  it('sends setUserID again when the ID actually changes', () => {
+    const { result } = renderHook(() => useMetrica(), { wrapper: Providers });
+
+    result.current.setUserID('12345');
+    result.current.setUserID('67890');
+    result.current.setUserID('67890');
+    result.current.setUserID('12345');
+
+    expect(YM_MOCK).toHaveBeenCalledTimes(3);
+    expect(YM_MOCK).toHaveBeenNthCalledWith(1, 444, 'setUserID', '12345');
+    expect(YM_MOCK).toHaveBeenNthCalledWith(2, 444, 'setUserID', '67890');
+    expect(YM_MOCK).toHaveBeenNthCalledWith(3, 444, 'setUserID', '12345');
   });
 });

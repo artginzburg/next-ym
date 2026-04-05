@@ -1,4 +1,4 @@
-import { useCallback, useContext } from 'react';
+import { useCallback, useContext, useRef } from 'react';
 
 import { MetricaTagIDContext } from '../components/YandexMetricaProvider';
 import type {
@@ -41,8 +41,14 @@ export const useMetrica = () => {
     [tagID],
   );
 
+  // Skip redundant setUserID calls — the semantic is "set the current user",
+  // so sending the same ID repeatedly is wasted work (and common, since consumers
+  // often call this from an effect that re-runs on window focus, route change, etc.).
+  const lastUserIDRef = useRef<string | null>(null);
   const setUserID = useCallback(
     (userID: string) => {
+      if (lastUserIDRef.current === userID) return;
+      lastUserIDRef.current = userID;
       ym(tagID, 'setUserID', userID);
     },
     [tagID],
