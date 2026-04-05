@@ -2,7 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/@artginzburg/next-ym)](https://www.npmjs.com/package/@artginzburg/next-ym)
 [![npm downloads](https://img.shields.io/npm/dw/@artginzburg/next-ym)](https://www.npmjs.com/package/@artginzburg/next-ym)
-[![codecov](https://codecov.io/gh/artginzburg/next-ym/graph/badge.svg?token=OZ8UX4NPK2)](https://codecov.io/gh/artginzburg/next-ym)
+[![codecov](https://codecov.io/gh/artginzburg/next-ym/graph/badge.svg?token=2UUW3VBAWF)](https://codecov.io/gh/artginzburg/next-ym)
 
 The most complete **Yandex Metrica** integration for **Next.js** — App Router, Pages Router, ecommerce, Safari ITP proxy, and automatic SPA tracking out of the box.
 
@@ -20,6 +20,7 @@ There are several Yandex Metrica packages for Next.js. Here's how they compare:
 | **TypeScript**        |       ✅ full        |         ✅          |          ❌          |            partial            |
 | **noscript fallback** |          ✅          |         ❌          |          ✅          |              ❌               |
 | **Env-based tag ID**  |          ✅          |         ❌          |          ❌          |              ❌               |
+| **Test coverage**     |     ✅ **100%**      |       ✅ yes        |          ❌          |              ❌               |
 | **Last updated**      |       Apr 2026       |      Sep 2025       |       Nov 2019       |           Dec 2025            |
 | **Weekly downloads**  |         292          |         846         |        9,161         |              19               |
 
