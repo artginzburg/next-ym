@@ -85,6 +85,42 @@ describe('YandexMetricaProvider', () => {
     );
   });
 
+  it('renders with experimental nextJsNativeLoading', () => {
+    render(
+      <YandexMetricaProvider tagID={444} experimental={{ nextJsNativeLoading: true }}>
+        <div />
+      </YandexMetricaProvider>,
+    );
+
+    expect(document.getElementById('yandex-metrika-init')).toBeInTheDocument();
+    expect(document.getElementById('yandex-metrika-init')).toHaveTextContent(
+      'window.ym = window.ym',
+    );
+    expect(document.getElementById('yandex-metrica')).not.toBeInTheDocument();
+  });
+
+  it('initializes the default dataLayer when ecommerce is enabled with true', () => {
+    render(
+      <YandexMetricaProvider tagID={444} initParameters={{ ecommerce: true }}>
+        <div />
+      </YandexMetricaProvider>,
+    );
+    expect(document.getElementById('yandex-metrica')).toHaveTextContent(
+      'window.dataLayer = window.dataLayer || [];',
+    );
+  });
+
+  it('initializes a custom dataLayer when ecommerce is a string', () => {
+    render(
+      <YandexMetricaProvider tagID={444} initParameters={{ ecommerce: 'customLayer' }}>
+        <div />
+      </YandexMetricaProvider>,
+    );
+    expect(document.getElementById('yandex-metrica')).toHaveTextContent(
+      'window.customLayer = window.customLayer || [];',
+    );
+  });
+
   it('gets tagID from NEXT_PUBLIC_YANDEX_METRICA_ID', () => {
     process.env.NEXT_PUBLIC_YANDEX_METRICA_ID = '444';
     render(
