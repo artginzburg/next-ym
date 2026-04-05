@@ -6,6 +6,8 @@
 
 The most complete **Yandex Metrica** integration for **Next.js** — App Router, Pages Router, ecommerce, Safari ITP proxy, and automatic SPA tracking out of the box.
 
+> 🇷🇺 [Русская версия](./README.ru.md)
+
 ## Why this package?
 
 There are several Yandex Metrica packages for Next.js. Here's how they compare:
